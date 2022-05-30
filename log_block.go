@@ -14,8 +14,8 @@ type LogBlock struct {
 	MessageType string
 	Duration    string
 	Statement   string
-	Params      []string
-	Fingerprint string `json:",omitempty"`
+	Params      []string `json:",omitempty"`
+	Fingerprint string   `json:",omitempty"`
 }
 
 func newLogBlockAndStmtBuilder(timestamp, host, port, user, database, pid, messageType, duration, stmt string) (*LogBlock, *strings.Builder) {

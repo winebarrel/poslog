@@ -10,8 +10,9 @@ import (
 
 var version string
 
-func parseArgs() (io.ReadCloser, bool) {
+func parseArgs() (io.ReadCloser, bool, bool) {
 	fingerprint := flag.Bool("fingerprint", false, "Add SQL fingerprint")
+	fillParams := flag.Bool("fill-params", false, "Fill SQL placeholders with parameters")
 	showVersion := flag.Bool("version", false, "Print version and exit")
 	flag.Parse()
 
@@ -37,7 +38,7 @@ func parseArgs() (io.ReadCloser, bool) {
 		}
 	}
 
-	return file, *fingerprint
+	return file, *fingerprint, *fillParams
 }
 
 func printUsageAndExit() {

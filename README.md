@@ -13,8 +13,10 @@ brew install winebarrel/poslog/poslog
 ## Usage
 
 ```sh
-$ poslog -h
+% poslog -h
 Usage of poslog:
+  -fill-params
+    	Fill SQL placeholders with parameters
   -fingerprint
     	Add SQL fingerprint
   -version

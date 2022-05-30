@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/percona/go-mysql/query"
@@ -20,6 +21,7 @@ var (
 type Parser struct {
 	Callback    func(block *LogBlock)
 	Fingerprint bool
+	FillParams  bool
 }
 
 func (p *Parser) Parse(file io.Reader) error {
@@ -108,6 +110,15 @@ func (p *Parser) Parse(file io.Reader) error {
 func (p *Parser) process(logBlk *LogBlock, stmtBldr *strings.Builder) {
 	stmt := strings.TrimSpace(stmtBldr.String())
 	logBlk.Statement = stmt
+
+	if p.FillParams {
+		for i, v := range logBlk.Params {
+			placeholder := "$" + strconv.Itoa(i+1)
+			logBlk.Statement = strings.ReplaceAll(logBlk.Statement, placeholder, v)
+		}
+
+		logBlk.Params = nil
+	}
 
 	if p.Fingerprint {
 		logBlk.Fingerprint = query.Fingerprint(strings.ReplaceAll(stmt, `"`, ""))

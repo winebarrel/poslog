@@ -13,7 +13,7 @@ func init() {
 }
 
 func main() {
-	file, fingerprint := parseArgs()
+	file, fingerprint, fillParams := parseArgs()
 	defer file.Close()
 
 	proc := func(logBlk *poslog.LogBlock) {
@@ -29,6 +29,7 @@ func main() {
 	p := &poslog.Parser{
 		Callback:    proc,
 		Fingerprint: fingerprint,
+		FillParams:  fillParams,
 	}
 
 	err := p.Parse(file)
