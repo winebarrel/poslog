@@ -73,7 +73,7 @@ func (p *Parser) Parse(file io.Reader) error {
 				stmt = logMatches[2]
 			}
 
-			logBlk, stmtBldr = newLogBlockAndStmtBuilder(
+			logBlk = newLogBlock(
 				prefixMatches[1], // timestamp
 				host,
 				port,
@@ -82,8 +82,10 @@ func (p *Parser) Parse(file io.Reader) error {
 				prefixMatches[4], // pid
 				messageType,
 				duration,
-				stmt,
 			)
+
+			stmtBldr = &strings.Builder{}
+			stmtBldr.WriteString(stmt)
 		} else if logBlk != nil {
 			stmtBldr.WriteString(line)
 		}
