@@ -1,5 +1,9 @@
 package poslog
 
+import (
+	"strings"
+)
+
 type LogBlock struct {
 	Timestamp   string
 	Host        string
@@ -13,7 +17,7 @@ type LogBlock struct {
 	Fingerprint string `json:",omitempty"`
 }
 
-func newLogBlock(timestamp, host, port, user, database, pid, messageType, duration string) *LogBlock {
+func newLogBlockAndStmtBuilder(timestamp, host, port, user, database, pid, messageType, duration, stmt string) (*LogBlock, *strings.Builder) {
 	logBlk := &LogBlock{
 		Timestamp:   timestamp,
 		Host:        host,
@@ -25,5 +29,8 @@ func newLogBlock(timestamp, host, port, user, database, pid, messageType, durati
 		Duration:    duration,
 	}
 
-	return logBlk
+	stmtBldr := &strings.Builder{}
+	stmtBldr.WriteString(stmt)
+
+	return logBlk, stmtBldr
 }
