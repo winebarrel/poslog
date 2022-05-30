@@ -14,6 +14,7 @@ type LogBlock struct {
 	MessageType string
 	Duration    string
 	Statement   string
+	Params      []string
 	Fingerprint string `json:",omitempty"`
 }
 

@@ -11,8 +11,10 @@ import (
 )
 
 var (
-	reHeader = regexp.MustCompile(`(?s)^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[^:]+):([^:]*):([^:]*):([^:]*):([^:]*):(.*)`)
-	reLog    = regexp.MustCompile(`(?s)^\s+(?:duration:\s+(\d+\.\d+)\s+ms\s+)?(?:statement|execute\s+[^:]+):(.*)`)
+	reHeader         = regexp.MustCompile(`(?s)^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[^:]+):([^:]*):([^:]*):([^:]*):([^:]*):(.*)`)
+	reLog            = regexp.MustCompile(`(?s)^\s+(?:duration:\s+(\d+\.\d+)\s+ms\s+)?(?:statement|execute\s+[^:]+):(.*)`)
+	reParams         = regexp.MustCompile(`(?s)^\s+parameters:\s+(.*)`)
+	reParamsSplitter = regexp.MustCompile(`(?m), \$\d+ = `)
 )
 
 type Parser struct {
@@ -36,12 +38,19 @@ func (p *Parser) Parse(file io.Reader) error {
 		}
 
 		if hdrMatches := reHeader.FindStringSubmatch(line); hdrMatches != nil {
+			messageType := hdrMatches[5]
+
+			if logBlk != nil && messageType == "DETAIL" {
+				if paramsMatches := reParams.FindStringSubmatch(hdrMatches[6]); paramsMatches != nil {
+					logBlk.Params = parseParameters(paramsMatches[1])
+				}
+			}
+
 			if logBlk != nil {
 				p.process(logBlk, stmtBldr)
 			}
 
 			logBlk, stmtBldr = nil, nil
-			messageType := hdrMatches[5]
 
 			if messageType != "LOG" {
 				continue
@@ -105,4 +114,15 @@ func (p *Parser) process(logBlk *LogBlock, stmtBldr *strings.Builder) {
 	}
 
 	p.Callback(logBlk)
+}
+
+func parseParameters(params string) []string {
+	params = ", " + strings.TrimSpace(params)
+	paramList := reParamsSplitter.Split(params, -1)
+
+	if len(paramList) > 0 {
+		paramList = paramList[1:]
+	}
+
+	return paramList
 }
