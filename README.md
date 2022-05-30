@@ -2,6 +2,8 @@
 
 Parser to extract SQL from postgresql.log
 
+[![build](https://github.com/winebarrel/poslog/actions/workflows/build.yml/badge.svg)](https://github.com/winebarrel/poslog/actions/workflows/build.yml)
+
 ## Usage
 
 ```
