@@ -36,7 +36,7 @@ func (p *Parser) Parse(file io.Reader) error {
 		}
 
 		if prefixMatches := rePrefix.FindStringSubmatch(line); prefixMatches != nil {
-			if stmtBldr != nil {
+			if logBlk != nil {
 				p.process(logBlk, stmtBldr)
 			}
 
