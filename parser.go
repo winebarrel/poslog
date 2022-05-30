@@ -45,7 +45,7 @@ func newBlock(timestamp, host, port, user, database, pid, messageType, duration,
 }
 
 func callBack(block *Block, stmtBldr *strings.Builder, fingerprint bool, cb func(block *Block)) {
-	stmt := strings.TrimRight(stmtBldr.String(), "\n")
+	stmt := strings.TrimSpace(stmtBldr.String())
 	block.Statement = stmt
 
 	if fingerprint {
