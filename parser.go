@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	rePrefix = regexp.MustCompile(`(?s)^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[^:]+):([^:]*):([^:]*):([^:]*):([^:]*):(.*)`)
+	reHeader = regexp.MustCompile(`(?s)^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[^:]+):([^:]*):([^:]*):([^:]*):([^:]*):(.*)`)
 	reLog    = regexp.MustCompile(`(?s)^\s+(?:duration:\s+(\d+\.\d+)\s+ms\s+)?(?:statement|execute\s+[^:]+):(.*)`)
 )
 
@@ -35,19 +35,19 @@ func (p *Parser) Parse(file io.Reader) error {
 			return err
 		}
 
-		if prefixMatches := rePrefix.FindStringSubmatch(line); prefixMatches != nil {
+		if hdrMatches := reHeader.FindStringSubmatch(line); hdrMatches != nil {
 			if logBlk != nil {
 				p.process(logBlk, stmtBldr)
 			}
 
 			logBlk, stmtBldr = nil, nil
-			messageType := prefixMatches[5]
+			messageType := hdrMatches[5]
 
 			if messageType != "LOG" {
 				continue
 			}
 
-			host := prefixMatches[2]
+			host := hdrMatches[2]
 			port := ""
 
 			if strings.Contains(host, "(") {
@@ -56,7 +56,7 @@ func (p *Parser) Parse(file io.Reader) error {
 				port = strings.TrimRight(hostPort[1], ")")
 			}
 
-			user := prefixMatches[3]
+			user := hdrMatches[3]
 			database := ""
 
 			if strings.Contains(user, "@") {
@@ -68,18 +68,18 @@ func (p *Parser) Parse(file io.Reader) error {
 			duration := ""
 			stmt := ""
 
-			if logMatches := reLog.FindStringSubmatch(prefixMatches[6]); logMatches != nil {
+			if logMatches := reLog.FindStringSubmatch(hdrMatches[6]); logMatches != nil {
 				duration = logMatches[1]
 				stmt = logMatches[2]
 			}
 
 			logBlk, stmtBldr = newLogBlockAndStmtBuilder(
-				prefixMatches[1], // timestamp
+				hdrMatches[1], // timestamp
 				host,
 				port,
 				user,
 				database,
-				prefixMatches[4], // pid
+				hdrMatches[4], // pid
 				messageType,
 				duration,
 				stmt,
