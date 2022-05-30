@@ -6,13 +6,13 @@ Parser to extract SQL from postgresql.log
 
 ## Installation
 
-```
+```sh
 brew install winebarrel/poslog/poslog
 ```
 
 ## Usage
 
-```
+```sh
 $ poslog -h
 Usage of poslog:
   -fingerprint
@@ -34,7 +34,7 @@ $ poslog postgresql.log # cat postgresql.log poslog
 {"Timestamp":"2022-05-30 04:59:50 UTC","Host":"10.0.3.147","Port":"57382","User":"postgres","Database":"postgres","Pid":"[12768]","MessageType":"LOG","Duration":"","Statement":" commit;"}
 ...
 
-% poslog -fingerprint postgresql.log | jq -r .Fingerprint
+$ poslog -fingerprint postgresql.log | jq -r .Fingerprint
 select now();
 begin;
 insert into hello values(?+);
