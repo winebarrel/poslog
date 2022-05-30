@@ -14,7 +14,7 @@ brew install winebarrel/poslog/poslog
 
 ```
 $ poslog -h
-Usage of ./poslog:
+Usage of poslog:
   -fingerprint
     	Add SQL fingerprint
   -version
