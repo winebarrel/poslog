@@ -8,7 +8,7 @@ const (
 	readLineBufSize = 4096
 )
 
-func ReadLine(reader *bufio.Reader) ([]byte, error) {
+func ReadLine(reader *bufio.Reader) (string, error) {
 	buf := make([]byte, 0, readLineBufSize)
 	var err error
 
@@ -25,5 +25,5 @@ func ReadLine(reader *bufio.Reader) ([]byte, error) {
 		}
 	}
 
-	return buf, err
+	return string(buf) + "\n", err
 }

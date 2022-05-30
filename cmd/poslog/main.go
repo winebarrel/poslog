@@ -16,15 +16,22 @@ func main() {
 	file, fingerprint := parseArgs()
 	defer file.Close()
 
-	err := poslog.Parse(file, fingerprint, func(block *poslog.Block) {
-		line, err := jsoniter.ConfigFastest.MarshalToString(block)
+	proc := func(logBlk *poslog.LogBlock) {
+		line, err := jsoniter.ConfigFastest.MarshalToString(logBlk)
 
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println(line)
-	})
+	}
+
+	p := &poslog.Parser{
+		Callback:    proc,
+		Fingerprint: fingerprint,
+	}
+
+	err := p.Parse(file)
 
 	if err != nil {
 		log.Fatal(err)
