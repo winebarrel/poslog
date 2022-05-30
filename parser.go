@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/percona/go-mysql/query"
 	"github.com/winebarrel/poslog/utils"
 )
 
@@ -22,6 +23,7 @@ type Block struct {
 	MessageType string
 	Duration    string
 	Statement   string
+	Fingerprint string `json:",omitempty"`
 }
 
 func newBlock(timestamp, host, port, user, database, pid, messageType, duration, stmt string) (*Block, *strings.Builder) {
@@ -42,13 +44,18 @@ func newBlock(timestamp, host, port, user, database, pid, messageType, duration,
 	return block, stmtBldr
 }
 
-func callBack(block *Block, stmtBldr *strings.Builder, cb func(block *Block)) {
+func callBack(block *Block, stmtBldr *strings.Builder, fingerprint bool, cb func(block *Block)) {
 	stmt := strings.TrimRight(stmtBldr.String(), "\n")
 	block.Statement = stmt
+
+	if fingerprint {
+		block.Fingerprint = query.Fingerprint(strings.ReplaceAll(stmt, `"`, ""))
+	}
+
 	cb(block)
 }
 
-func Parse(file io.Reader, cb func(block *Block)) error {
+func Parse(file io.Reader, fingerprint bool, cb func(block *Block)) error {
 	reader := bufio.NewReader(file)
 
 	var block *Block
@@ -68,7 +75,7 @@ func Parse(file io.Reader, cb func(block *Block)) error {
 
 		if prefixMatches := rePrefix.FindStringSubmatch(line); prefixMatches != nil {
 			if block != nil {
-				callBack(block, stmtBldr, cb)
+				callBack(block, stmtBldr, fingerprint, cb)
 			}
 
 			messageType := prefixMatches[5]
@@ -121,7 +128,7 @@ func Parse(file io.Reader, cb func(block *Block)) error {
 	}
 
 	if block != nil {
-		callBack(block, stmtBldr, cb)
+		callBack(block, stmtBldr, fingerprint, cb)
 	}
 
 	return nil
