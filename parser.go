@@ -112,8 +112,9 @@ func (p *Parser) process(logBlk *LogBlock, stmtBldr *strings.Builder) {
 	logBlk.Statement = stmt
 
 	if p.FillParams {
-		for i, v := range logBlk.Params {
-			placeholder := "$" + strconv.Itoa(i+1)
+		for i := len(logBlk.Params); i > 0; i-- {
+			placeholder := "$" + strconv.Itoa(i)
+			v := logBlk.Params[i-1]
 			logBlk.Statement = strings.ReplaceAll(logBlk.Statement, placeholder, v)
 		}
 
