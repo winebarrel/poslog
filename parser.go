@@ -2,6 +2,8 @@ package poslog
 
 import (
 	"bufio"
+	"crypto/sha1"
+	"encoding/hex"
 	"io"
 	"regexp"
 	"strconv"
@@ -122,7 +124,10 @@ func (p *Parser) process(logBlk *LogBlock, stmtBldr *strings.Builder) {
 	}
 
 	if p.Fingerprint {
-		logBlk.Fingerprint = query.Fingerprint(strings.ReplaceAll(stmt, `"`, ""))
+		fingerprint := query.Fingerprint(strings.ReplaceAll(stmt, `"`, ""))
+		hash := sha1.Sum([]byte(fingerprint))
+		logBlk.Fingerprint = fingerprint
+		logBlk.FingerprintSHA1 = hex.EncodeToString(hash[:])
 	}
 
 	p.Callback(logBlk)

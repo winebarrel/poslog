@@ -5,17 +5,18 @@ import (
 )
 
 type LogBlock struct {
-	Timestamp   string
-	Host        string
-	Port        string
-	User        string
-	Database    string
-	Pid         string
-	MessageType string
-	Duration    string
-	Statement   string
-	Params      []string `json:",omitempty"`
-	Fingerprint string   `json:",omitempty"`
+	Timestamp       string
+	Host            string
+	Port            string
+	User            string
+	Database        string
+	Pid             string
+	MessageType     string
+	Duration        string
+	Statement       string
+	Params          []string `json:",omitempty"`
+	Fingerprint     string   `json:",omitempty"`
+	FingerprintSHA1 string   `json:",omitempty"`
 }
 
 func newLogBlockAndStmtBuilder(timestamp, host, port, user, database, pid, messageType, duration, stmt string) (*LogBlock, *strings.Builder) {
