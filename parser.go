@@ -60,6 +60,14 @@ func (p *Parser) Parse(file io.Reader) error {
 				continue
 			}
 
+			logMatches := reLog.FindStringSubmatch(hdrMatches[6])
+
+			if logMatches == nil {
+				continue
+			}
+
+			duration := logMatches[1]
+			stmt := logMatches[2]
 			host := hdrMatches[2]
 			port := ""
 
@@ -76,14 +84,6 @@ func (p *Parser) Parse(file io.Reader) error {
 				userDatabase := strings.SplitN(user, "@", 2)
 				user = userDatabase[0]
 				database = userDatabase[1]
-			}
-
-			duration := ""
-			stmt := ""
-
-			if logMatches := reLog.FindStringSubmatch(hdrMatches[6]); logMatches != nil {
-				duration = logMatches[1]
-				stmt = logMatches[2]
 			}
 
 			logBlk, stmtBldr = newLogBlockAndStmtBuilder(
