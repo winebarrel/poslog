@@ -1,6 +1,6 @@
 module github.com/winebarrel/poslog
 
-go 1.18
+go 1.21.4
 
 require (
 	github.com/json-iterator/go v1.1.12
