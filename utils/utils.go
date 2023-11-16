@@ -2,28 +2,22 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 )
 
-const (
-	readLineBufSize = 4096
-)
-
-func ReadLine(reader *bufio.Reader) (string, error) {
-	buf := make([]byte, 0, readLineBufSize)
-	var err error
+func ReadLine(r *bufio.Reader) (string, error) {
+	var buf bytes.Buffer
 
 	for {
-		line, isPrefix, e := reader.ReadLine()
-		err = e
+		line, isPrefix, err := r.ReadLine()
+		n := len(line)
 
-		if len(line) > 0 {
-			buf = append(buf, line...)
+		if n > 0 {
+			buf.Write(line)
 		}
 
 		if !isPrefix || err != nil {
-			break
+			return buf.String() + "\n", err
 		}
 	}
-
-	return string(buf) + "\n", err
 }
