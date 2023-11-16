@@ -4,12 +4,6 @@
 
 Parser to extract SQL from postgresql.log
 
-## Installation
-
-```sh
-brew install winebarrel/poslog/poslog
-```
-
 ## Usage
 
 ```sh
