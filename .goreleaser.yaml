@@ -12,12 +12,3 @@ builds:
       - darwin
 checksum:
   name_template: "checksums.txt"
-brews:
-  - tap:
-      owner: winebarrel
-      name: homebrew-poslog
-    homepage: https://github.com/winebarrel/poslog
-    description: Parser to extract SQL from postgresql.log
-    license: MIT
-    install: |
-      bin.install 'poslog'
