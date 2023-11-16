@@ -1,8 +1,8 @@
 # poslog
 
-Parser to extract SQL from postgresql.log
+[![test](https://github.com/winebarrel/poslog/actions/workflows/test.yml/badge.svg)](https://github.com/winebarrel/poslog/actions/workflows/test.yml)
 
-[![build](https://github.com/winebarrel/poslog/actions/workflows/build.yml/badge.svg)](https://github.com/winebarrel/poslog/actions/workflows/build.yml)
+Parser to extract SQL from postgresql.log
 
 ## Installation
 
