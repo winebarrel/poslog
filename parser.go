@@ -18,6 +18,7 @@ var (
 	reLog            = regexp.MustCompile(`(?s)^\s+(?:duration:\s+(\d+\.\d+)\s+ms\s+)?(?:statement|execute\s+[^:]+):(.*)`)
 	reParams         = regexp.MustCompile(`(?s)^\s+parameters:\s+(.*)`)
 	reParamsSplitter = regexp.MustCompile(`(?m), \$\d+ = `)
+	reHTTP           = regexp.MustCompile(`(?s)^(?:[\*><]|[-\w]+:) .*$`)
 )
 
 type Parser struct {
@@ -39,6 +40,14 @@ func (p *Parser) Parse(file io.Reader) error {
 			break
 		} else if err != nil {
 			return err
+		}
+
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		if reHTTP.MatchString(line) {
+			continue
 		}
 
 		if hdrMatches := reHeader.FindStringSubmatch(line); hdrMatches != nil {
